@@ -1,71 +1,66 @@
-<?php
-session_start();
-include 'koneksi.php';
-include 'navbar.php';
-?>
-<!DOCTYPE html>
-<html lang="en">
+<h2>DATA PRODUK</h2>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Produk</title>
-</head>
-<!--Link Bootstrap-->
-<link rel="stylesheet" href="admin/assets/css/bootstrap.min.css">
-<link rel="stylesheet" href="admin/assets/css/bootstrap.css">
-<link rel="stylesheet" href="admin/assets/css/bootstrap-grid.css">
-<!-- FONTAWESOME STYLES-->
-<link href="admin/assets/css/font-awesome.css" rel="stylesheet" />
+<a href="index.php?halaman=tambahproduk" class="btn btn-info">Tambah Data</a>
+<form action="index.php?halaman=produk" class="d-flex " role="search">
+    <input class="form-control" type="search" placeholder="Cari Barang" aria-label="Search" name="cari">
+    <a id="pencarian" href="index.php?halaman=produk" class="btn btn-default"><i class="fa fa-edit fa-1x"></i>&nbsp;cari</a>
 
-<body style="background-color: #8CC3A9;padding-top: 6rem;">
-    <!--Konten Toko-->
-    <section class="konten">
+</form>
+<div class="table-responsive">
+    <table class="table table-bordered">
+    <thead>
+        <tr>
+            <th class="text-center">No</th>
+            <th class="text-center">Nama</th>
+            <th class="text-center">Kategori</th>
+            <th class="text-center">Harga Jual</th>
+            <th class="text-center">Harga Beli</th>
+            <th class="text-center">foto</th>
+            <th class="text-center">Stok Produk</th>
+            <th class="text-center">aksi</th>
+        </tr>
+    </thead>
+    <?php
+    $nomor = 1;
+    $ambil = $koneksi->query("select * from produk");
+    while ($pecah = $ambil->fetch_assoc()) {
+    ?>
+        <tbody>
+            <tr>
+                <td><?php echo $nomor; ?></td>
+                <td><?php echo $pecah['nama_produk']; ?></td>
+                <td><?php echo $pecah['kategori']; ?></td>
+                <td ><?php echo $pecah['harga_produk']; ?></td>
+                <td ><?php echo $pecah['harga_beli']; ?></td>
+                <td >
+                    <img src="../fotoproduk/<?php echo $pecah['foto_produk']; ?>" width="100">
+                </td>
+                <td ><?php echo $pecah['stok_produk']; ?></td>
+                <td >
+                    <a href="index.php?halaman=hapusproduk&id=<?php echo $pecah['id_produk']; ?>" class="btn btn-danger"><i class="fa fa-minus-circle fa-1x"></i>&nbsp;Hapus</a>
+                    <a href="index.php?halaman=ubahproduk&id=<?php echo $pecah['id_produk']; ?>" class="btn btn-warning"><i class="fa fa-edit fa-1x"></i>&nbsp;Ubah</a>
+                </td>
+            </tr>
+        <?php
+        $nomor++;
+    }
+        ?>
+        </tbody>
+    </table>
+</div>
 
-       
-        <div class="container">          
-                <h2> Kategori Produk</h2>
-               <nav class="nav nav-pills flex-column flex-sm-row">
-                  <a class="flex-sm-fill text-sm-center nav-link fs-3 " >Media tanam</a>
-                  <a class="flex-sm-fill text-sm-center nav-link fs-3 " >Pot</a>
-                  <a class="flex-sm-fill text-sm-center nav-link fs-3 " >Tanaman Hias</a>
-                  <a class="flex-sm-fill text-sm-center nav-link fs-3 " >Barang Lainnya</a>
-                </nav>
-        </div>
-    </section>
-    
-    <section>
-       <div class="container">
-            <div class="row"> 
-                    <?php
-                        
-                        $ambil = $koneksi->query("select * from produk ");
-                            
-                        ?>
-                                <?php
-                                    while ($perproduk = $ambil->fetch_assoc()) {
-                                ?>
-                                    <div class="col-lg-3 col-md-3" style="padding-bottom: 1rem;">
-                                        <div class="card h-100">
-                                            <a href="detail.php?id=<?php echo $perproduk["id_produk"];?>">
-                                                 <img src="fotoproduk/<?php echo $perproduk["foto_produk"]; ?>" class="card-img-top" alt="...">
-                                            </a>
-                                            <div class="card-body">
-                                                <h5 class="card-title"><?php echo $perproduk['nama_produk']; ?></h5>       
-                                                <p class="card-text">Rp.<?php echo number_format($perproduk['harga_produk']); ?></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                        <?php
-                    
-                        }
-                        ?>            
-            </div>     
-        </div>
-    </section>
-    <script src="admin/assets/js/jquery.js"></script> 
-    <script src="admin/assets/js/popper.js"></script> 
-    <script src="admin/assets/js/bootstrap.js"></script>
-</body>
+<script>
+                                                                    document.getElementById('<?php echo $linkID; ?>').addEventListener('click', function(e) {
+                                                                        // Cari elemen input "qty" dengan name "qty"
+                                                                        var qtyInput = document.querySelector('input[name="qty"]');
 
-</html>
+                                                                        // Periksa apakah nilai qty kosong atau kurang dari 1
+                                                                        if (qtyInput.value === '' || parseInt(qtyInput.value) < 1) {
+                                                                            e.preventDefault(); // Mencegah tautan dari mengarahkan ke halaman selanjutnya
+                                                                            alert('Isi kolom Jumlah dengan banyak penjualan.');
+                                                                        } else {
+                                                                            // Tambahkan nilai qty ke URL tautan
+                                                                            this.href += '&qty=' + qtyInput.value;
+                                                                        }
+                                                                    });
+                                                                </script>

@@ -1,47 +1,57 @@
-<?php 
-include 'koneksi.php';
-session_start();
-//ambil id produk dari database
-$id_produk = $_GET["id"];
-//query ambil data
-$ambil= $koneksi->query("select * from produk where id_produk='$id_produk'");
-$detail = $ambil->fetch_assoc();
-
+<h2>DETAIL PEMBELIAN</h2>
+<?php
+    $ambil = $koneksi->query("select * from pembelian join pelanggan on pembelian.id_pelanggan = pelanggan.id_pelanggan where pembelian.id_pembelian='$_GET[id]'");
+    $detail = $ambil->fetch_assoc();
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Produk</title>
-</head>
-    <!--Link Bootstrap-->
-    <link rel="stylesheet" href="admin/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="admin/assets/css/bootstrap.css">
-    <!-- FONTAWESOME STYLES-->
-    <link href="admin/assets/css/font-awesome.css" rel="stylesheet" />
-<body style="background-color: #8CC3A9; padding-top: 6rem;">
-    <!--Navbar-->
-    <?php include'navbar.php'; ?>
-    <br/>
-    <section class="content">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <img src="fotoproduk/<?php echo $detail["foto_produk"]; ?>" class="img-fluid">
-                </div>
-                <div class="col-md-6">
-                    <h2><?php echo $detail["nama_produk"]; ?></h2>
-                    <h4>Rp. <?php echo number_format($detail["harga_produk"]);?></h4>
-                    <h5>Stok : <?php echo $detail["stok_produk"]; ?></h5>
-                    <p><?php echo$detail["deskripsi"]; ?></p>
-                </div>
-            </div>
-        </div>
-    </section>
-        <script src="admin/assets/js/jquery.js"></script> 
-        <script src="admin/assets/js/popper.js"></script> 
-        <script src="admin/assets/js/bootstrap.js"></script>
-</body>
-</html>
+<div class="row">
+    <div class="col-md-4">
+        <h3>Pembelian</h3>
+        <strong>No. Pembelian : <?php echo $detail['id_pembelian'];?></strong><br>
+        Tanggal :<?php echo $detail['tangga_beli']; ?> <br>
+        Total   :Rp. <?php echo number_format($detail['total_pembelian']); ?><br/>
+        Status  :<?php echo $detail['status_beli'];?>
+    </div>
+    <div class="col-md-4">
+        <h3>Pelanggan</h3>
+        <strong><?php echo $detail['nama_pelanggan'];?></strong><br>
+        <?php echo $detail['telpon']; ?> <br>
+        <?php echo $detail['email_pelanggan']; ?>
+    </div>
+    <div class="col-md-4">
+        <h3>Pengiriman</h3>
+        <strong><?php echo $detail['nama_kota'];?></strong><br>
+        Ongkos Kirim : Rp.<?php echo number_format($detail['tarif']); ?><br>
+        Pengiriman   : <?php echo $detail['alamat']; ?>
+    </div>
+</div>
+<br/>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama Produk</th>
+            <th>Harga</th>
+            <th>Jumlah</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <?php
+        $nomor = 1;
+        $ambil= $koneksi->query("select * from pembelian_produk join produk on pembelian_produk.id_produk=produk.id_produk where pembelian_produk.id_pembelian='$_GET[id]'");
+        while($pecah = $ambil->fetch_assoc()){
+    ?>
+    <tbody>
+        <tr>
+            <td><?php echo $nomor; ?></td>
+            <td><?php echo $pecah['nama_produk']; ?></td>
+            <td><?php echo $pecah['harga_produk']; ?></td>
+            <td><?php echo $pecah['jumlah']; ?></td>
+            <td>Rp. <?php echo number_format($pecah['harga_produk']*$pecah['jumlah']); ?></td>
+        </tr>
+        <?php
+        $nomor++;
+        }
+        ?>
+    </tbody>
+</table>
